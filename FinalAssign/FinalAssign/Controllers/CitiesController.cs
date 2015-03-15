@@ -12,17 +12,20 @@ using FinalAssign.Models;
 
 namespace FinalAssign.Controllers
 {
+    [RoutePrefix("api/city")]
     public class CitiesController : ApiController
     {
         private FinalAssignContext db = new FinalAssignContext();
 
         // GET: api/Cities
+        [Route("getall")]
         public IQueryable<City> GetCities()
         {
             return db.Cities;
         }
 
         // GET: api/Cities/5
+        [Route("get/city/{id:int}")]
         [ResponseType(typeof(City))]
         public IHttpActionResult GetCity(int id)
         {
@@ -34,6 +37,17 @@ namespace FinalAssign.Controllers
 
             return Ok(city);
         }
+
+        [Route("getcityaddr/{id:int}")]
+        public dynamic GetCityAddress(int id)
+        {
+            City cit=db.Cities.Find(id);
+            if(cit==null)
+                return NotFound();
+            return Ok(new {Population=cit.Population, City=cit.Name,Country=cit.Country});
+        }
+
+
 
         // PUT: api/Cities/5
         [ResponseType(typeof(void))]

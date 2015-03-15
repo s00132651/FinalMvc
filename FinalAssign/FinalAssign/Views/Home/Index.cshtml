@@ -1,5 +1,28 @@
-﻿
-@model IEnumerable<FinalAssign.Models.City>
+﻿@model IEnumerable<FinalAssign.Models.City>
+<script>
+    $(function () {
+        $('table tr').click(function () {
+            var id = this.Id;
+            $.ajax({
+                type: "GET",
+                url: '/api/city/getcityaddr/' + id,
+                contentType: "text/plain; charset-utf-8",
+                data: id,
+                dataType: "json",
+                success: function (data) {
+                    $('#getcityaddr').empty();
+                    $('#getcityaddr').append(data.Population + '<br>');//display data
+                    $('#getcityaddr').append(data.City + '<br>');
+                    $('#getcityaddr').append(data.Country);
+
+                }
+            });
+        }
+        );//end click
+    });//end functionn
+
+</script>
+
 <div class="jumbotron">
     <h1>ASP.NET</h1>
     <p class="lead">Assesment using Local and Web Apis</p>
@@ -9,17 +32,27 @@
     <div class="col-md-2">
         <div class="panel panel-primary">
             <div class="panel-heading">City</div>
-            @foreach (var item in Model)
-            { 
-            <p>@item.Name</p>
-            }
+            <table class="table-striped table-condensed" id="Nametbl" >
+            
+                @foreach (var item in Model)
+                {
+                <tr style="cursor:pointer"
+                    id="@item.Id">
+                    <td>@item.Name</td>
+                </tr>
+                }
+                </table>
             <div class="panel-body">
 
             </div>
         </div>
     </div>
     <div class="col-md-4">
-       
+       <div class="panel panel-primary">
+           <div class="panel-heading">Details</div>
+           <div class="panel-body" id="getcityaddr"></div>
+
+       </div>
     </div>
     <div class="col-md-6">
       <div id="gmap"></div>
