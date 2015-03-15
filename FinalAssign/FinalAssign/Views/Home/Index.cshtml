@@ -1,8 +1,11 @@
 ﻿@model IEnumerable<FinalAssign.Models.City>
+<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDY0kkJiTPVd2U7aTOAwhc9ySH6oHxOIYM&sensor=false"></script>
 <script>
     $(function () {
+        var geocoder;
+        var map;
         $('table tr').click(function () {
-            var id = this.Id;
+            var id = this.id;
             $.ajax({
                 type: "GET",
                 url: '/api/city/getcityaddr/' + id,
@@ -14,13 +17,41 @@
                     $('#getcityaddr').append(data.Population + '<br>');//display data
                     $('#getcityaddr').append(data.City + '<br>');
                     $('#getcityaddr').append(data.Country);
+                    geocodeLookup(data.City,data.Country);
 
                 }
             });
         }
         );//end click
+        google.maps.event.addDomListener(window, 'load', initialize);
+        geocoder = new google.maps.Geocoder();
     });//end functionn
+    var address = data.City + data.Country;
 
+
+    function geocodeLookup(address) {
+        geocoder.geocode({ 'address': address }, function (results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                map.setCenter(results[0].geometry.location);
+                var marker = new google.maps.Marker({
+                    map: map,
+                    position: results[0].geometry.location
+                });
+            } else {
+                alert('Geocode was not successful for the following reason: ' + status);
+            }
+        });
+
+    }
+    function initialize() {
+        geocoder = new google.maps.Geocoder();
+        var latlng = new google.maps.LatLng(-34.397, 150.644);
+        var mapOptions = {
+            zoom: 8,
+            center: latlng
+        }
+        map = new google.maps.Map(document.getElementById('gmap'), mapOptions);
+    }
 </script>
 
 <div class="jumbotron">
@@ -55,6 +86,6 @@
        </div>
     </div>
     <div class="col-md-6">
-      <div id="gmap"></div>
+      <div id="gmap" style="width:500px; height:500px"></div>
     </div>
 </div>
